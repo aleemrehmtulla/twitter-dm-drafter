@@ -1,8 +1,7 @@
-// NOTE: hi! please do leave a star if you found this helpful! it'll lmk i should keep making these 😄
+// NOTE: hi! please do leave a star if you found this helpful! it'll lmk if i should keep making these 😄
 
 // Here we're listening for messages from contentScript.js, and sending a response back
 // This is because we can't directly call openai from contentScript.js so we do the magic here :)
-
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // Replace the following with your own details. These are just for demo purposes
   // We use this to make GPT-3 less robotic, and sound like you
@@ -52,11 +51,13 @@ Now, you're starting a new conversation:
   }
 
   // call openai for a response 🤠
+  // feel free to use the latest model (003)
+  // 002 is just more stable / less likely to rate limit
   fetch("https://api.openai.com/v1/completions", {
     body: JSON.stringify({
       model: "text-davinci-002",
       prompt: prompt,
-      temperature: 0.7,
+      temperature: 0.8,
       max_tokens: 256,
       top_p: 1,
       frequency_penalty: 0,

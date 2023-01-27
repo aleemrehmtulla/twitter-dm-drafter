@@ -66,6 +66,8 @@
           });
           const lastMessages = messages.slice(-4);
 
+          // TODO: clean up code here, it's messy, and has repeated code.
+          // TODO: also, rm old code when you're done with it
           button.addEventListener("click", () => {
             // Start the process of generating a response. Set to "thinking" emoji as a visual loading indicator
             // We then send the last 4 messages to the background script, which will then send a request to the API
@@ -81,15 +83,11 @@
                   // Trim() will get rid of any weird whitespace at beginning or end of response, openai will sometimes add this!
                   response = response.trim();
 
-                  // This is the tricky part. We need to simulate a click event on the text input, and then add the response text to it.
-                  // BUT. If it's the first generation we have to remove the placeholder text first, otherwise it'll look wack
-
-                  // Check if the text input is empty, if it is, then we need to remove the placeholder text
                   const inputData = document.querySelector(
                     ".DraftEditor-editorContainer"
                   ).lastElementChild?.lastElementChild?.lastElementChild
                     .lastElementChild?.lastElementChild?.innerHTML;
-                  // We'll also check if the placeholder text exists, if it does, then we need to remove it
+                  // We'll also check if the placeholder text exists, if it does, we click smthg else
                   const placeholder = document.querySelector(
                     ".public-DraftEditorPlaceholder-inner"
                   );
@@ -107,28 +105,50 @@
                       view: window,
                     });
                     rootDiv.dispatchEvent(event);
-                    // After click, remove placeholder div
-                    const placeholder = document.querySelector(
-                      ".public-DraftEditorPlaceholder-inner"
-                    );
-                    placeholder.remove();
-
-                    // Now we can add the response text to the text input
                     const textinput = document.querySelector(
                       ".DraftEditor-editorContainer"
                     );
-                    const replace = `<div aria-describedby="placeholder-987cj" aria-multiline="true" class="notranslate public-DraftEditor-content" contenteditable="true" data-testid="dmComposerTextInput" role="textbox" spellcheck="false" tabindex="0" no-focustrapview-refocus="true" style="outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;"><div data-contents="true"><div class="" data-block="true" data-editor="987cj" data-offset-key="557b0-0-0"><div data-offset-key="557b0-0-0" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"><span data-offset-key="557b0-0-0"><span data-text="true">${response}</span></span></div></div></div></div><grammarly-extension data-grammarly-shadow-root="true" style="position: absolute; top: 0px; left: -0.5px; pointer-events: none; z-index: auto;" class="cGcvT"></grammarly-extension><grammarly-extension data-grammarly-shadow-root="true" style="position: absolute; top: 0px; left: -0.5px; pointer-events: none; z-index: auto;" class="cGcvT"></grammarly-extension>`;
-                    textinput.innerHTML = replace;
+
+                    document.execCommand("insertText", false, response);
+
+                    // // After click, remove placeholder div
+                    // const placeholder = document.querySelector(
+                    //   ".public-DraftEditorPlaceholder-inner"
+                    // );
+                    // placeholder.remove();
+
+                    // // Now we can add the response text to the text input
+                    // const textinput = document.querySelector(
+                    //   ".DraftEditor-editorContainer"
+                    // );
+                    // const replace = `<div aria-describedby="placeholder-987cj" aria-multiline="true" class="notranslate public-DraftEditor-content" contenteditable="true" data-testid="dmComposerTextInput" role="textbox" spellcheck="false" tabindex="0" no-focustrapview-refocus="true" style="outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;"><div data-contents="true"><div class="" data-block="true" data-editor="987cj" data-offset-key="557b0-0-0"><div data-offset-key="557b0-0-0" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"><span data-offset-key="557b0-0-0"><span data-text="true">${response}</span></span></div></div></div></div>`;
+                    // textinput.innerHTML = replace;
                     // BAM. Set the button back to the thinking emoji
                     button.innerText = "🤔";
                   } else {
-                    // This is a bad pratice tbh. Have some duplicate code here, should run the last couple lines regardless of if the placeholder text exists or not
-                    // But rn its 2am so will fix later :-)
-                    const textinput = document.querySelector(
+                    // if we've already typed something, we want to replace it
+                    // this means we click the input rather then the placeholder
+                    const rootDiv = document.querySelector(
                       ".DraftEditor-editorContainer"
                     );
-                    const replace = `<div aria-describedby="placeholder-987cj" aria-multiline="true" class="notranslate public-DraftEditor-content" contenteditable="true" data-testid="dmComposerTextInput" role="textbox" spellcheck="false" tabindex="0" no-focustrapview-refocus="true" style="outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;"><div data-contents="true"><div class="" data-block="true" data-editor="987cj" data-offset-key="557b0-0-0"><div data-offset-key="557b0-0-0" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"><span data-offset-key="557b0-0-0"><span data-text="true">${response}</span></span></div></div></div></div><grammarly-extension data-grammarly-shadow-root="true" style="position: absolute; top: 0px; left: -0.5px; pointer-events: none; z-index: auto;" class="cGcvT"></grammarly-extension><grammarly-extension data-grammarly-shadow-root="true" style="position: absolute; top: 0px; left: -0.5px; pointer-events: none; z-index: auto;" class="cGcvT"></grammarly-extension>`;
-                    textinput.innerHTML = replace;
+                    // Simulate a click event on the element
+                    var event = new MouseEvent("click", {
+                      bubbles: true,
+                      cancelable: true,
+                      view: window,
+                    });
+                    rootDiv.dispatchEvent(event);
+
+                    // delete the current, and insert the new text
+                    document.execCommand("selectAll", false, null);
+                    document.execCommand("delete", false, null);
+                    document.execCommand("insertText", false, response);
+
+                    // const textinput = document.querySelector(
+                    //   ".DraftEditor-editorContainer"
+                    // );
+                    // const replace = `<div aria-describedby="placeholder-987cj" aria-multiline="true" class="notranslate public-DraftEditor-content" contenteditable="true" data-testid="dmComposerTextInput" role="textbox" spellcheck="false" tabindex="0" no-focustrapview-refocus="true" style="outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;"><div data-contents="true"><div class="" data-block="true" data-editor="987cj" data-offset-key="557b0-0-0"><div data-offset-key="557b0-0-0" class="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"><span data-offset-key="557b0-0-0"><span data-text="true">${response}</span></span></div></div></div></div>`;
+                    // textinput.innerHTML = replace;
                     button.innerText = "🤔";
                   }
                 } else {
