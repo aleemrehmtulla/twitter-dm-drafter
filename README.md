@@ -10,7 +10,9 @@ you can regenerate as many times as you want, i store nothing! all your keys ğŸ¤
 
 ## Demo!
 
-mp4 link here
+https://user-images.githubusercontent.com/60443878/215209838-a1357927-abe8-40d5-87b2-662c514aa7da.mp4
+
+
 
 ## Usage ğŸ¤
 
