@@ -1,8 +1,8 @@
-# gpt3-twitter-extension 🤔
+# twitter-dm-drafter 🤔
 
 ## What is this?
 
-gpt3-twitter-extension is an add-on to twitter. it'll show up right next to the send button in your DMs.
+twitter-dm-drafter is an add-on to twitter. it'll show up right next to the send button in your DMs.
 
 when you click the button, it will give you a draft response based on the conversation.
 
